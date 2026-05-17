@@ -40,10 +40,8 @@ jobs:
         with:
           path: ~/.npm
           # Iosevka pins its own package-lock.json per tag, so iosevka_version
-          # is a sufficient cache discriminant.
-          key: npm-${{ inputs.iosevka_version }}-${{ hashFiles('get-all-families-in-private-build-plan/package.json') }}
-          restore-keys: |
-            npm-${{ inputs.iosevka_version }}-
+          # is a sufficient cache discriminant for the build job's npm ci.
+          key: npm-${{ inputs.iosevka_version }}
       - run: nix develop -c bash scripts/build-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
       - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" hinted
       - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" unhinted
@@ -76,4 +74,4 @@ jobs:
           gh release create "${tag}" artifacts/*.tar.gz \
             --target "${{ github.sha }}" \
             --title "${tag}" \
-            --notes "Iosevka ${{ inputs.iosevka_version }} • build $(date -u +%Y-%m-%d)"
+            --notes "Iosevka ${{ inputs.iosevka_version }} - build $(date -u +%Y-%m-%d)"

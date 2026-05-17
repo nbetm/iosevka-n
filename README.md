@@ -17,7 +17,7 @@ Releases are tagged `<iosevka_version>-<short_sha>` (e.g. `v33.3.3-a1b2c3d`).
 
 ## Tarball layout
 
-Each tarball is flat: `.ttf` files at the root, no nested directory.
+Each tarball is flat: `.ttf` files at the root plus upstream's `OFL.txt`, no nested directory.
 Two variants per family:
 
 - `<family>-<version>.tar.gz`: hinted. Default, best for Windows/Linux at standard DPI.
@@ -26,10 +26,12 @@ Two variants per family:
 If you're not sure which, grab the hinted one.
 
 ```
-$ tar -tzf iosevka-n-v33.3.3.tar.gz | head -3
+$ tar -tzf iosevka-n-v33.3.3.tar.gz | head -5
+./
 ./iosevka-n-Bold.ttf
 ./iosevka-n-BoldItalic.ttf
 ./iosevka-n-Italic.ttf
+./OFL.txt
 ```
 
 ## Local build
