@@ -34,3 +34,7 @@ npm run build -- "ttf::${family}"
 rm -rf "${orig_pwd}/dist/${family}"
 mkdir -p "${orig_pwd}/dist"
 cp -r "dist/${family}" "${orig_pwd}/dist/${family}"
+
+# Bundle the OFL into each variant subdir so tarballs ship with the license (OFL-1.1 §3).
+cp LICENSE.md "${orig_pwd}/dist/${family}/TTF/OFL.txt"
+cp LICENSE.md "${orig_pwd}/dist/${family}/TTF-Unhinted/OFL.txt"
