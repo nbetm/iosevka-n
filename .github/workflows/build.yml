@@ -18,7 +18,9 @@ jobs:
       families: ${{ steps.discover.outputs.buildPlans }}
     steps:
       - uses: actions/checkout@v6
-      - uses: DeterminateSystems/nix-installer-action@v3
+      - uses: DeterminateSystems/nix-installer-action@v22
+        with:
+          determinate: false
       - id: discover
         run: nix develop -c bash scripts/discover-families.sh >> "$GITHUB_OUTPUT"
 
@@ -31,8 +33,10 @@ jobs:
         family: ${{ fromJson(needs.setup-matrix.outputs.families) }}
     steps:
       - uses: actions/checkout@v6
-      - uses: DeterminateSystems/nix-installer-action@v3
-      - uses: actions/cache@v4
+      - uses: DeterminateSystems/nix-installer-action@v22
+        with:
+          determinate: false
+      - uses: actions/cache@v5
         with:
           path: ~/.npm
           # Iosevka pins its own package-lock.json per tag, so iosevka_version
@@ -41,12 +45,12 @@ jobs:
       - run: nix develop -c bash scripts/build-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
       - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" hinted
       - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" unhinted
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.family }}-hinted-tarball
           path: dist/${{ matrix.family }}-${{ inputs.iosevka_version }}.tar.gz
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.family }}-unhinted-tarball
           path: dist/${{ matrix.family }}-unhinted-${{ inputs.iosevka_version }}.tar.gz
@@ -57,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           path: artifacts
           merge-multiple: true
