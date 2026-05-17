@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       iosevka_version:
-        description: Upstream Iosevka tag (e.g. v33.3.3)
+        description: Upstream Iosevka tag (e.g. v34.5.0)
         required: false
-        default: v33.3.3
+        default: v34.5.0
 
 permissions:
   contents: write

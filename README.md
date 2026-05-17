@@ -9,11 +9,11 @@ Consumed by [`nix-config/pkgs/iosevka-n`](https://github.com/nbetm/nix-config/tr
 
 ```bash
 gh workflow run build.yml                               # uses default iosevka_version
-gh workflow run build.yml -f iosevka_version=v33.4.0    # override upstream tag
+gh workflow run build.yml -f iosevka_version=v33.3.3    # override upstream tag
 gh run watch                                            # follow the run
 ```
 
-Releases are tagged `<iosevka_version>-<short_sha>` (e.g. `v33.3.3-a1b2c3d`).
+Releases are tagged `<iosevka_version>-<short_sha>` (e.g. `v34.5.0-a1b2c3d`).
 
 ## Tarball layout
 
@@ -26,7 +26,7 @@ Two variants per family:
 If you're not sure which, grab the hinted one.
 
 ```
-$ tar -tzf iosevka-n-v33.3.3.tar.gz | head -5
+$ tar -tzf iosevka-n-v34.5.0.tar.gz | head -5
 ./
 ./iosevka-n-Bold.ttf
 ./iosevka-n-BoldItalic.ttf
@@ -38,10 +38,10 @@ $ tar -tzf iosevka-n-v33.3.3.tar.gz | head -5
 
 ```bash
 nix develop
-bash scripts/build-family.sh iosevka-n v33.3.3
-bash scripts/package-family.sh iosevka-n v33.3.3 hinted
-bash scripts/package-family.sh iosevka-n v33.3.3 unhinted
-ls dist/iosevka-n-v33.3.3.tar.gz dist/iosevka-n-unhinted-v33.3.3.tar.gz
+bash scripts/build-family.sh iosevka-n v34.5.0
+bash scripts/package-family.sh iosevka-n v34.5.0 hinted
+bash scripts/package-family.sh iosevka-n v34.5.0 unhinted
+ls dist/iosevka-n-v34.5.0.tar.gz dist/iosevka-n-unhinted-v34.5.0.tar.gz
 ```
 
 ## Bump the nix-config pin
