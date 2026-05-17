@@ -1,0 +1,73 @@
+name: Build Iosevka N
+
+on:
+  workflow_dispatch:
+    inputs:
+      iosevka_version:
+        description: Upstream Iosevka tag (e.g. v33.3.3)
+        required: false
+        default: v33.3.3
+
+permissions:
+  contents: write
+
+jobs:
+  setup-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      families: ${{ steps.discover.outputs.buildPlans }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v3
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      - uses: DeterminateSystems/flake-checker-action@v12
+      - id: discover
+        run: nix develop -c bash scripts/discover-families.sh >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: setup-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        family: ${{ fromJson(needs.setup-matrix.outputs.families) }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v3
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      - uses: DeterminateSystems/flake-checker-action@v12
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          # Iosevka pins its own package-lock.json per tag, so iosevka_version
+          # is a sufficient cache discriminant.
+          key: npm-${{ inputs.iosevka_version }}-${{ hashFiles('get-all-families-in-private-build-plan/package.json') }}
+          restore-keys: |
+            npm-${{ inputs.iosevka_version }}-
+      - run: nix develop -c bash scripts/build-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
+      - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.family }}-tarball
+          path: dist/${{ matrix.family }}-${{ inputs.iosevka_version }}.tar.gz
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          short_sha="$(git rev-parse --short HEAD)"
+          tag="${{ inputs.iosevka_version }}-${short_sha}"
+          gh release create "${tag}" artifacts/*.tar.gz \
+            --target "${{ github.sha }}" \
+            --title "${tag}" \
+            --notes "Iosevka ${{ inputs.iosevka_version }} • build $(date -u +%Y-%m-%d)"
