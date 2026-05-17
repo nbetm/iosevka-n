@@ -27,7 +27,7 @@ cp "${orig_pwd}/private-build-plans.toml" "${workdir}/iosevka/private-build-plan
 
 cd "${workdir}/iosevka"
 npm ci
-npm run build -- "ttf::${family}"
+npm run build -- "ttf::${family}" "ttf-unhinted::${family}"
 
 # Copy build output back to a stable path.
 # Remove any prior local result first so re-runs don't merge directories.
