@@ -43,17 +43,11 @@ jobs:
           # is a sufficient cache discriminant for the build job's npm ci.
           key: npm-${{ inputs.iosevka_version }}
       - run: nix develop -c bash scripts/build-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
-      - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" hinted
-      - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}" unhinted
+      - run: nix develop -c bash scripts/package-family.sh "${{ matrix.family }}" "${{ inputs.iosevka_version }}"
       - uses: actions/upload-artifact@v7
         with:
-          name: ${{ matrix.family }}-hinted-tarball
+          name: ${{ matrix.family }}-tarball
           path: dist/${{ matrix.family }}-${{ inputs.iosevka_version }}.tar.gz
-          if-no-files-found: error
-      - uses: actions/upload-artifact@v7
-        with:
-          name: ${{ matrix.family }}-unhinted-tarball
-          path: dist/${{ matrix.family }}-unhinted-${{ inputs.iosevka_version }}.tar.gz
           if-no-files-found: error
 
   release:

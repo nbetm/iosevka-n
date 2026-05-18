@@ -27,7 +27,7 @@ cp "${orig_pwd}/private-build-plans.toml" "${workdir}/iosevka/private-build-plan
 
 cd "${workdir}/iosevka"
 npm ci
-npm run build -- "ttf::${family}" "ttf-unhinted::${family}"
+npm run build -- "ttf::${family}"
 
 # Copy build output back to a stable path.
 # Remove any prior local result first so re-runs don't merge directories.
@@ -35,6 +35,5 @@ rm -rf "${orig_pwd}/dist/${family}"
 mkdir -p "${orig_pwd}/dist"
 cp -r "dist/${family}" "${orig_pwd}/dist/${family}"
 
-# Bundle the OFL into each variant subdir so tarballs ship with the license (OFL-1.1 §3).
+# Bundle the OFL so tarballs ship with the license (OFL-1.1 §3).
 cp LICENSE.md "${orig_pwd}/dist/${family}/TTF/OFL.txt"
-cp LICENSE.md "${orig_pwd}/dist/${family}/TTF-Unhinted/OFL.txt"
