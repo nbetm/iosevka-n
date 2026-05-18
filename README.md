@@ -1,18 +1,19 @@
 # iosevka-n
 
-Custom [Iosevka](https://typeof.net/Iosevka/) build pipeline.
-Each release ships 3 TTF tarballs: `iosevka-n`, `iosevka-n-term`, `iosevka-n-quasi-proportional`.
+My custom [Iosevka](https://typeof.net/Iosevka/) build pipeline.
 
-Consumed by [`nix-config/pkgs/iosevka-n`](https://github.com/nbetm/nix-config/tree/main/pkgs/iosevka-n).
+![Iosevka N preview](preview.png)
+*Previewed via Iosevka's online customizer.*
 
 ## Trigger a build
 
 ```bash
 gh workflow run build.yml                               # build v34.5.0 by default
-gh workflow run build.yml -f iosevka_version=v33.3.3    # build an specific version
+gh workflow run build.yml -f iosevka_version=v33.3.3    # build a specific version
 gh run watch                                            # follow the run
 ```
 
+Each release ships 3 hinted TTF tarballs: `iosevka-n`, `iosevka-n-term`, `iosevka-n-quasi-proportional`.
 Releases are tagged `<iosevka_version>-<short_sha>` (e.g. `v34.5.0-a1b2c3d`).
 
 ## Tarball layout
@@ -37,11 +38,14 @@ bash scripts/package-family.sh iosevka-n v34.5.0
 ls dist/iosevka-n-v34.5.0.tar.gz
 ```
 
-## Bump the nix-config pin
+## Using from Nix
 
-In `nix-config`, edit `pkgs/iosevka-n/sources.nix`:
+These releases are consumable via `fetchurl`.
+My own [nix-config](https://github.com/nbetm/nix-config/tree/main/pkgs/iosevka-n) does it this way.
 
-1. Set `release` to the new tag.
+Bumping to a new release:
+
+1. Set `release` in `pkgs/iosevka-n/sources.nix` to the new tag.
 1. Set each entry's `sha256` to `"sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="`.
 1. Build all three with `--keep-going` to catch every hash mismatch at once:
    ```bash
